@@ -21,27 +21,27 @@
 # include <sys/time.h>
 # include <pthread.h>
 
-/* typedef struct s_fork
-{
-    t_fork right;
-    t_fork left;
-} t_fork;
-
 typedef struct s_philo
 {
     int id;
-    t_fork fork;
-    pthread thread;
+    pthread_t thread;
+    pthread_mutex_t left_fork;
+    pthread_mutex_t right_fork;
 } t_philo;
 
 typedef struct s_args
 {
     int number_of_philosophers;
-    long long time_to_die;
-    long long time_to_eat;
-    long long time_to_sleep;
+    long int time_to_die;
+    long int time_to_eat;
+    long int time_to_sleep;
     int number_of_times_each_philosopher_must_eat;
 } t_args;
-*/
+
+
+long int	ft_long_atoi(char *str);
+int check_args_num(int argc);
+int check_int_limits(char **argv);
+int check_only_numbers(char **argv);
 
 # endif

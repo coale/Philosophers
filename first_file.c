@@ -14,8 +14,10 @@
 
 void *helloWorld()
 {
-    sleep(1);
-    printf("Hello World \n");
+    int i = 0;
+    sleep(0);
+    printf("Hello World %d\n", i);
+    i++;
     return NULL;
 }
 
@@ -33,7 +35,7 @@ int main()
     {
         printf("Before Thread %d\n", i);
         pthread_create(&thread_id, NULL, helloWorld, NULL);
-        //pthread_join(thread_id, NULL);
+        pthread_join(thread_id, NULL);
         printf("After Thread\n");
         i++;
     }
