@@ -45,6 +45,6 @@ int check_int_limits(char **argv);
 int check_only_numbers(char **argv);
 void* philosopher(void* arg);
 void initialize_table(DiningTable* table, int argc, char* argv[]);
-void destroy_table(DiningTable* table)
+void destroy_table(DiningTable* table);
 
 # endif
