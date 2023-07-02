@@ -45,9 +45,11 @@ typedef struct s_mutexes {
 // UTILS
 void			ft_bzero(void *s, size_t n);
 void			*ft_calloc(size_t nmemb, size_t size);
-int				check_args(int argc, char **argv);
 useconds_t		get_timestamp(t_philo *philo);
 void			log_message(t_philo *philo, const char *message);
+long int		ft_long_atoi(char *str);
+// CHECK_ARGS
+int				check_args(int argc, char **argv);
 // THREAD
 void			*philo_solo_thread(void *arg);
 void			ph_thread_norme(t_philo *philo);

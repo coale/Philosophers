@@ -39,25 +39,27 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (arr);
 }
 
-int	check_args(int argc, char **argv)
+long int	ft_long_atoi(char *str)
 {
-	if ((argc < 5 || argc > 6) || atoi(argv[1]) < 1 || atoi(argv[2]) < 0 \
-				|| atoi(argv[3]) < 0 || atoi(argv[4]) < 0 \
-				|| atoi(argv[1]) > 2147483647 || atoi(argv[2]) > 2147483647 \
-				|| atoi(argv[3]) > 2147483647 || atoi(argv[4]) > 2147483647) 
+	int			i;
+	int			sign;
+	long int	num;
+
+	i = 0;
+	num = 0;
+	sign = 1;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-')
+		sign = -1;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
 	{
-		printf("Invalid arguments.\n");
-		return (1);
+		num = num * 10 + str[i] - '0';
+		i++;
 	}
-	if (argc == 6)
-	{
-		if (atoi(argv[5]) > 2147483647)
-		{
-			printf("Invalid arguments.\n");
-			return (1);
-		}
-	}
-	return (0);
+	return (num * sign);
 }
 
 useconds_t	get_timestamp(t_philo *philo)

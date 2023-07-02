@@ -1,10 +1,10 @@
 NAME = philo
 
-SRC = death.c forks.c init.c main.c philo_actions.c threads.c utils.c
+SRC = death.c forks.c init.c main.c philo_actions.c threads.c utils.c check_args.c
 
 OBJ_S = $(SRC:.c=.o)
 
-FLAG = -lpthread -Wall -Wextra -Werror
+FLAG = -lpthread -Wall -Wextra -Werror -g
 
 $(NAME): $(OBJ_S)
 	@cc $(FLAG) $(SRC) -o $(NAME)
