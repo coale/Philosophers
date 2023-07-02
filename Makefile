@@ -4,7 +4,7 @@ SRC = death.c forks.c init.c main.c philo_actions.c threads.c utils.c check_args
 
 OBJ_S = $(SRC:.c=.o)
 
-FLAG = -lpthread -Wall -Wextra -Werror -g
+FLAG = -lpthread -Wall -Wextra -Werror
 
 $(NAME): $(OBJ_S)
 	@cc $(FLAG) $(SRC) -o $(NAME)
