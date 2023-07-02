@@ -6,70 +6,46 @@
 /*   By: aconta <aconta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 09:59:27 by aconta            #+#    #+#             */
-/*   Updated: 2023/06/21 09:59:27 by aconta           ###   ########.fr       */
+/*   Updated: 2023/07/02 17:42:30 by aconta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void* philosopher(void* arg)
+void	init_for_norme(t_philo *philos, t_mutexes *mut, int i)
 {
-    PhilosopherData* data;
-    DiningTable* table;
-    int philo_id ;
-    int eat_limit_reached;
-
-    data = (PhilosopherData*)arg;
-    table = data->table;
-    philo_id = data->philo_id;
-    eat_limit_reached = 0;
-    while (1) 
-    {
-        grab_forks(table, philo_id);
-        print_state("has taken a fork", (philo_id + 1));
-
-        print_state("is eating", (philo_id + 1));
-        usleep(table->time_to_eat * 1000);
-
-        release_forks(table, philo_id);
-        print_state("is sleeping", (philo_id + 1));
-        usleep(table->time_to_sleep * 1000);
-
-        if (table->number_of_times_each_philosopher_must_eat > 0) 
-        {
-            table->eat_count[philo_id]++;
-            if (table->eat_count[philo_id] >= table->number_of_times_each_philosopher_must_eat)
-                eat_limit_reached = 1;
-        }
-        if (eat_limit_reached)
-            break;
-    }
-    return NULL;
+	philos[i].num_philo = philos[0].num_philo;
+	philos[i].time_to_die = philos->time_to_die;
+	philos[i].time_to_eat = philos->time_to_eat;
+	philos[i].time_to_sleep = philos->time_to_sleep;
+	philos[i].num_eat_goal = philos->num_eat_goal;
+	philos[i].num_eat_count = 0;
+	philos[i].log_mutex = &mut->log_mutex;
+	philos[i].death_flag = 0;
+	philos[i].last_meal_time = get_timestamp(&philos[i]);
 }
 
-void initialize_table(DiningTable* table, int argc, char* argv[])
+void	init_philo(t_philo *philos, t_mutexes *mut, int num_philo)
 {
-    int i;
+	int	i;
 
-    table->number_of_philosophers = atoi(argv[1]);
-    table->time_to_die = atoi(argv[2]);
-    table->time_to_eat = atoi(argv[3]);
-    table->time_to_sleep = atoi(argv[4]);
-    table->number_of_times_each_philosopher_must_eat = -1;
-
-    if (argc == 6)
-        table->number_of_times_each_philosopher_must_eat = atoi(argv[5]);
-
-    table->forks = malloc(table->number_of_philosophers * sizeof(pthread_mutex_t));
-    table->philosophers = malloc(table->number_of_philosophers * sizeof(pthread_t));
-    table->philosopher_numbers = malloc(table->number_of_philosophers * sizeof(int));
-    table->eat_count = malloc(table->number_of_philosophers * sizeof(int));
-
-    i = 0;
-    while (i < table->number_of_philosophers) {
-        pthread_mutex_init(&table->forks[i], NULL);
-        table->philosopher_numbers[i] = i + 1;
-        table->eat_count[i] = 0;
-        i++;
-    }
+	i = 0;
+	while (i < num_philo) 
+	{
+		philos[i].access_mutex = &mut->access_mutex;
+		philos[i].start_time = get_timestamp(&philos[i]);
+		philos[i].id = i + 1;
+		if (i % 2) 
+		{
+			philos[i].left_fork = &mut->forks[i];
+			philos[i].right_fork = &mut->forks[(i + 1) % philos->num_philo];
+		}
+		else 
+		{
+			philos[i].left_fork = &mut->forks[(i + 1) % philos->num_philo];
+			philos[i].right_fork = &mut->forks[i];
+		}
+		init_for_norme(philos, mut, i);
+		i++;
+	}
 }

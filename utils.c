@@ -5,40 +5,82 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aconta <aconta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/06/21 09:48:12 by aconta            #+#    #+#             */
-/*   Updated: 2023/06/21 09:48:14 by aconta           ###   ########.fr       */
+/*   Created: 2023/07/02 16:40:14 by aconta            #+#    #+#             */
+/*   Updated: 2023/07/02 18:11:30 by aconta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long int	ft_long_atoi(char *str)
+void	ft_bzero(void *s, size_t n)
 {
-	int			i;
-	int			sign;
-	long int	num;
+	size_t	i;
+	char	*ps;
 
 	i = 0;
-	num = 0;
-	sign = 1;
-	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
-		i++;
-	if (str[i] == '-')
-		sign = -1;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
+	ps = (char *)s;
+	while (i < n)
 	{
-		num = num * 10 + str[i] - '0';
+		ps[i] = '\0';
 		i++;
 	}
-	return (num * sign);
 }
 
-long int get_time_ms(void) 
+void	*ft_calloc(size_t nmemb, size_t size)
 {
-  struct timeval tv;
+	void	*arr;
 
-  gettimeofday(&tv, NULL);
-  return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	if (nmemb == 0 || size == 0)
+		return (malloc(0));
+	arr = malloc(nmemb * size);
+	if (!arr)
+		return (0);
+	ft_bzero(arr, size * nmemb);
+	return (arr);
+}
+
+int	check_args(int argc, char **argv)
+{
+	if ((argc < 5 || argc > 6) || atoi(argv[1]) < 1 || atoi(argv[2]) < 0 \
+				|| atoi(argv[3]) < 0 || atoi(argv[4]) < 0 \
+				|| atoi(argv[1]) > 2147483647 || atoi(argv[2]) > 2147483647 \
+				|| atoi(argv[3]) > 2147483647 || atoi(argv[4]) > 2147483647) 
+	{
+		printf("Invalid arguments.\n");
+		return (1);
+	}
+	if (argc == 6)
+	{
+		if (atoi(argv[5]) > 2147483647)
+		{
+			printf("Invalid arguments.\n");
+			return (1);
+		}
+	}
+	return (0);
+}
+
+useconds_t	get_timestamp(t_philo *philo)
+{
+	struct timeval	tv;
+	useconds_t		timestamp;
+
+	gettimeofday(&tv, NULL);
+	pthread_mutex_lock(philo->access_mutex);
+	timestamp = (tv.tv_sec * 1000 + tv.tv_usec / 1000) - philo->start_time;
+	pthread_mutex_unlock(philo->access_mutex);
+	return (timestamp);
+}
+
+void	log_message(t_philo *philo, const char *message)
+{
+	useconds_t	timestamp;
+
+	timestamp = get_timestamp(philo);
+	pthread_mutex_lock(philo->log_mutex);
+	pthread_mutex_lock(philo->access_mutex);
+	if (philo->death_flag == 0)
+		printf("%u %d %s\n", timestamp, philo->id, message);
+	pthread_mutex_unlock(philo->access_mutex);
+	pthread_mutex_unlock(philo->log_mutex);
 }
